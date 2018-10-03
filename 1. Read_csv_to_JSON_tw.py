@@ -8,6 +8,7 @@ import csv # reads CSV
 import json # Handles JSON
 import pandas as pd # Managed the data while it's in memory and converts between CSV and JSON
 import os.path
+import datetime
 
 ################################# Read in CSV and save as JSON #################################
 
@@ -18,30 +19,20 @@ print(' ')
 
 projectpath = './' # Hold the current folder (where the .py file resides) in a variable as the project path
 
-inputfilepath = projectpath + "CharityCharacteristics.csv" # Grab the filepath of the CSV to be imported
+datapath = 'Original data/' # Original data is held in another folder to make the git repo tider
+
+inputfilepath = projectpath + datapath + "CharityCharacteristics.csv" # Grab the filepath of the CSV to be imported
 
 df = pd.DataFrame.from_csv(inputfilepath) # Create a panda's dataframe from the CSV
-
-#print(df) # Commented out prints used to check import has completed correctly
 
 df.reset_index(inplace=True) # Remove the index of the frame which is asigned to column 0 on import (can be changed on import but we want a 2 level index)
 df.set_index(['ccnum', 'financial_year'], inplace=True) # Set the 2 level index. The data is longitudinal so charity number (ccnum) and period (financial_year) uniquiely identify each case
 
-df.drop(index='2006-07', level=1, inplace=True) # Drop periods not to be used in analysis - we want a cross section
-df.drop(index='2007-08', level=1, inplace=True)
-df.drop(index='2008-09', level=1, inplace=True)
-df.drop(index='2009-10', level=1, inplace=True)
-df.drop(index='2010-11', level=1, inplace=True)
-#df.drop(index='2011-12', level=1, inplace=True) # this is the period which is going to be analysed. This could esily be changed by commenting out different lines
-df.drop(index='2012-13', level=1, inplace=True)
-df.drop(index='2013-14', level=1, inplace=True)
+for year in ['2006-07', '2007-08', '2008-09', '2009-10', '2010-11', '2012-13', '2013-14']: # Drop periods not to be used in analysis - we want a cross section. '2011-12' is left out as this is the period we want to keep.
+	df.drop(index=year, level=1, inplace=True) 
 
 df.reset_index(inplace=True) # 2 level index no longer needed
 df.set_index(['ccnum'], inplace=True) # Set index to charity number which is uniquely identifying within 1 time period
-
-#print(df)
-
-#df.drop(columns=['account_type'], inplace=True) # This line would drop unneeded columns if we wanted to at this stage - for now will pass the whole file out
 
 df.to_json(path_or_buf='active_data_file.json', orient='index') # Save the dataframe out to a JSON in the format 'index' which is easy to read and verify manually
 
