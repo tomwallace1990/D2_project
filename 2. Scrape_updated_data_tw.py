@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup as soup
 import csv
 import requests
 import time
+from time import sleep
 import datetime
 import random
 import json
@@ -18,6 +19,7 @@ import pandas as pd
 import numpy as np
 import math as maths
 import os.path
+import re
 
 ################################# Scraper #################################
 def scrapeorg(charno): # This defines the charity scraper fucntion - this get's looped over so everything is individual charity level. The main program is below.
@@ -33,14 +35,24 @@ def scrapeorg(charno): # This defines the charity scraper fucntion - this get's 
 	try: # This try and except block makes the scrape robust to loosing the internet or being disconnected by the remote server as it will go to sleep and then try agian later.
 		rorg = requests.get(webbaddress, headers=headers) # Grab the page using the URL and headers.
 	except:
-		sleeptime_disco = 1000 + random.randint(1,100) # Store the sleep time as an int with a little bit of randomness to make the behaviour look less systematic.
-		longsleeptime_disco = datetime.datetime.now() # Grab the current date/time so it can be shown to the user.
-		sleeptime2 = time.strftime('%H:%M:%S', time.gmtime(sleeptime_disco)) # Convert the number of seconds int into a time/date object to be shown to the user.
-		resumetime_disco = longsleeptime_disco + datetime.timedelta(0,sleeptime_disco) # Calculate when the program will resume.
-		print('*** WARN! Connection error. Sleeping for', sleeptime2, 'at', longsleeptime_disco.strftime("%H:%M:%S"), 'resuming at', resumetime_disco.strftime("%H:%M:%S"), '***') # Show info to the user.
-		print(' ') # White space for clarity.
-		sleep(sleeptime_disco) # Sleep.
-		rorg = requests.get(webbaddress, headers=headers) # Grab the page again after waking up.
+		try:
+			sleeptime_disco = 300 + random.randint(10,20) # Store the sleep time as an int with a little bit of randomness to make the behaviour look less systematic.
+			longsleeptime_disco = datetime.datetime.now() # Grab the current date/time so it can be shown to the user.
+			sleeptime2 = time.strftime('%H:%M:%S', time.gmtime(sleeptime_disco)) # Convert the number of seconds int into a time/date object to be shown to the user.
+			resumetime_disco = longsleeptime_disco + datetime.timedelta(0,sleeptime_disco) # Calculate when the program will resume.
+			print('*** WARN! Connection error. Sleeping for', sleeptime2, 'at', longsleeptime_disco.strftime("%H:%M:%S"), 'resuming at', resumetime_disco.strftime("%H:%M:%S"), '***') # Show info to the user.
+			print(' ') # White space for clarity.
+			sleep(sleeptime_disco) # Sleep.
+			rorg = requests.get(webbaddress, headers=headers) # Grab the page again after waking up.
+		except:
+				sleeptime_disco = 5000 + random.randint(1,200)
+				longsleeptime_disco = datetime.datetime.now()
+				sleeptime2 = time.strftime('%H:%M:%S', time.gmtime(sleeptime_disco))
+				resumetime_disco = longsleeptime_disco + datetime.timedelta(0,sleeptime_disco)
+				print('*** WARN! Connection error 2. Sleeping for', sleeptime2, 'at', longsleeptime_disco.strftime("%H:%M:%S"), 'resuming at', resumetime_disco.strftime("%H:%M:%S"), '***')
+				print(' ')
+				sleep(sleeptime_disco)
+				rorg = requests.get(webbaddress, headers=headers) # Grab the page
 
 	try: # This try block wraps the entire parse. If the charity has been removed they still have a page which is mostly blank and the parse will fail. They will then be given missing values intead.
 		html_org = rorg.text # Get the text elements of the page.
@@ -51,8 +63,10 @@ def scrapeorg(charno): # This defines the charity scraper fucntion - this get's 
 		expend = money[1] # Expenditure is always the second element.
 		name1 = soup_org.find("div", class_="charity-heading-panel") # Get the name, just for the output window and cross-checking - it is identical to the name already in the origional data.
 		name = name1.find("h1") # Name is a bit deeper so need a second line to grab 'h1' inside 'charity-heading-panel'.
+		nametext = name.text
 		finyear1 = soup_org.find("div", class_="charity-heading-panel") # get the financial year the record pertains to - mostly for cross-checking and validaiton.
 		finyear = finyear1.find("em") # Again needs a deeper dive into the tags
+		finyeartext = finyear.text
 
 		try: # Not all charities have this information so it has it's own try/except block which can gen missing values if it's not found rather than tripping the main try/except.
 			whatwhohow = soup_org.find('div', id='plWhatWhoHow', class_='detail-panel') # Need to go deeper into the tags to get these.
@@ -88,13 +102,31 @@ def scrapeorg(charno): # This defines the charity scraper fucntion - this get's 
 			print('*** WARN! Charity number: ' , charno,  'Area info error ***') # Warn the user
 
 		try:
-			staffnums = soup_org.find("div", class_="detail-25") # Get staff numbers info
-			staffnums = staffnums.find_all('span', class_='mid-money') # Get all the text the numbers are held in
-			trustee = staffnums[0] # Trustees always frist
-			staff = staffnums[1] # Employees second
+			staff = soup_org.find("div", class_="detail-25") # Get staff numbers info
+			staff = staff.find('span', class_='small-header', text='Employees') # Get all the text the numbers are held in
+			staff = staff.previous_sibling
+			staff = staff.text
+			staff = int(staff)
 		except:
-			trustee = '.'
-			staff = '.'
+			staff = 0
+
+		try:
+			trustee = soup_org.find("div", class_="detail-25") # Get staff numbers info
+			trustee = trustee.find('span', class_='small-header', text='Trustees') # Get all the text the numbers are held in
+			trustee = trustee.previous_sibling
+			trustee = trustee.text
+			trustee = int(trustee)
+		except:
+			trustee = 0
+
+		try:
+			volunteers = soup_org.find("div", class_="detail-25") # Get staff numbers info
+			volunteers = volunteers.find('span', class_='small-header', text='Volunteers') # Get all the text the numbers are held in
+			volunteers = volunteers.previous_sibling
+			volunteers = volunteers.text
+			volunteers = int(volunteers)
+		except:
+			volunteers = 0
 
 		try:
 			companyno = soup_org.find("div", id='ContentPlaceHolderDefault_cp_content_ctl00_CharityDetails_4_TabContainer1_tpOverview_plCompanyNumber', class_="charity-no") # Grab the company ID for charities which have it.
@@ -105,7 +137,15 @@ def scrapeorg(charno): # This defines the charity scraper fucntion - this get's 
 			companyno = companyno.replace('\r', '') # Strip returns.
 			companyno = companyno.replace(' ', '') # Strip empty space.
 		except:
-			companyno = -99 # Set missing to an int so the variable can be kept as an int when the charities are combined togethor at the end.                         
+			companyno = -99 # Set missing to an int so the variable can be kept as an int when the charities are combined togethor at the end.    
+
+		try:
+			website = soup_org.find_all("div", class_="detail-33")
+			website = website[1]
+			website = website.find('a', href= re.compile('http'))
+			website = website.text 
+		except:
+			website = '.'
 	
 		if 'M' in income.text: # Convert the money from '16.5M' to 16500000 so it can be held as an int
 			incometext1 = income.text.replace('£', '') #Remove string characters
@@ -139,14 +179,10 @@ def scrapeorg(charno): # This defines the charity scraper fucntion - this get's 
 			print('*** WARN! Charity number: ' , charno,  'expenditure format error ***')
 			expformat_error = 1
 
-		nametext = name.text # Convert name, date, turstee numbers and staff numbers to text (strip them of HTML).
-		finyeartext = finyear.text
-		trustee = trustee.text
-		staff = staff.text
 		survived=1 # Generate a variable tracking if the charity survived - if they have and up to date record they survived. If this function goes to 'except' they died.
 		statustext = "Charity found" # Generate status text for the output window if above is sucessful.
 
-		return (incometext, nametext, webbaddress, finyeartext, statustext, exptext, survived, incformat_error, expformat_error, trustee, staff, what, who, how, companyno) # Push the generated variables back to the main program
+		return (incometext, nametext, webbaddress, finyeartext, statustext, exptext, survived, incformat_error, expformat_error, trustee, staff, volunteers, what, who, how, companyno, website) # Push the generated variables back to the main program
 
 	except Exception as e: # If the prase fails, generate fault information and set variables to missing values - this charity died or was removed.
 		typetext = (str(type(e))) # This indicates the type of error.
@@ -155,18 +191,20 @@ def scrapeorg(charno): # This defines the charity scraper fucntion - this get's 
 		nametext = "." # Standard period missing identifier
 		finyeartext = "."
 		exptext = -99
-		trustee = '.'
-		staff = '.'
-		survived = 0 # Set survived to negative
+		trustee = 0
+		staff = 0
+		volunteers = 0 
+		survived = 0 # Set survived to 0
 		what = '.'
 		who = '.'
 		how = '.'
 		companyno = -99
+		website = '.'
 		incformat_error = 0
 		expformat_error = 0
 		statustext = "*** WARN! " + typetext + ": " + etext + " ***" # Format status to be shown to user
 
-		return (incometext, nametext, webbaddress, finyeartext, statustext, exptext, survived, incformat_error, expformat_error, trustee, staff, what, who, how, companyno) # Push the missing value variables back to the main program
+		return (incometext, nametext, webbaddress, finyeartext, statustext, exptext, survived, incformat_error, expformat_error, trustee, staff, volunteers, what, who, how, companyno, website) # Push the missing value variables back to the main program
 
 ################################# Main program #################################
 
@@ -188,29 +226,33 @@ statustext_list=[]
 exptext_list=[]
 trustee_list=[]
 staff_list=[]
+volunteers_list=[]
 survived_list=[]
 what_list=[]
 who_list=[]
 how_list=[]
 companyno_list=[]
+website_list=[]
 incformat_error_count = 0 # Initialise the format error counters as described in comment for line 58.
 expformat_error_count = 0
 
 for row in charno_list: # For each row in the list created above from the data frame index.
 	charID = row # Strip the charity number.
 	for charno in [charID]: # For each of the charity numbers.
-		incometext, nametext, webbaddress, finyeartext, statustext, exptext, survived, incformat_error, expformat_error, trustee, staff, what, who, how, companyno = scrapeorg(charno) # Feed the funciton each charity number in turn and pickup the returns from the fucntion.
+		incometext, nametext, webbaddress, finyeartext, statustext, exptext, survived, incformat_error, expformat_error, trustee, staff, volunteers, what, who, how, companyno, website = scrapeorg(charno) # Feed the funciton each charity number in turn and pickup the returns from the fucntion.
 		incometext_list.append(incometext) # Create lists of each of the returned variables as each charity is looped over and and each value is appended.
 		finyeartext_list.append(finyeartext)
 		statustext_list.append(statustext)
 		exptext_list.append(exptext)
 		trustee_list.append(trustee)
 		staff_list.append(staff)
+		volunteers_list.append(volunteers)
 		survived_list.append(survived)
 		what_list.append(what)
 		who_list.append(who)
 		how_list.append(how)
 		companyno_list.append(companyno)
+		website_list.append(website)
 		incformat_error_count = incformat_error_count+incformat_error # Create the format error counter based on the value coming from the function
 		expformat_error_count = expformat_error_count+expformat_error
 	print('---------------------------------------------------------------------------') # Print the results of each loop for the user to monitor
@@ -228,8 +270,8 @@ for row in charno_list: # For each row in the list created above from the data f
 		incometext_list = [int(i) for i in incometext_list] # Convert the income and expenditures to ints
 		exptext_list = [int(i) for i in exptext_list]
 		charno_list_dump = charno_list[:count] # Charity number is a bit different as it is not appended each time so this selects it from the list based on the count number of the run
-		dicto_part={'ccnum':charno_list_dump, 'updated_income':incometext_list, 'Updated_expenditure':exptext_list, 'Financial_year_ending':finyeartext_list, 'Trustees':trustee_list, 'Staff':staff_list, 'Company number':companyno_list, \
-			'Survived':survived_list, 'What the charity does':what_list, 'Who the charity helps':who_list, 'How the charity works':how_list} # Store the new variables as a dictionary
+		dicto_part={'ccnum':charno_list_dump, 'updated_income':incometext_list, 'Updated_expenditure':exptext_list, 'Financial_year_ending':finyeartext_list, 'Trustees':trustee_list, 'Staff':staff_list, 'Volunteers':volunteers_list, 'Company number':companyno_list, \
+			'Survived':survived_list, 'Website':website_list, 'What the charity does':what_list, 'Who the charity helps':who_list, 'How the charity works':how_list} # Store the new variables as a dictionary
 		df_part = pd.DataFrame(dicto_part) # Convert the dictionary to a pandas dataframe
 		df_part.set_index(['ccnum'], inplace=True) # Set the index of the data frame as charity number
 		starttime_str = starttime.strftime("%Y-%m-%d") # Grab the start time to add to the filename
@@ -239,7 +281,7 @@ for row in charno_list: # For each row in the list created above from the data f
 		dumpfilepath = dumppath + '/partial_dump' + starttime_str + '.json' # Concatenate the dump file path
 		df_part.to_json(path_or_buf=dumpfilepath, orient='index') # Save the dump dataframe out to a JSON
 
-		sleeptime = 800 + random.randint(1,60) # Generate a sleep time with some randomness to make the scrape look less systematic.
+		sleeptime = 500 + random.randint(1,60) # Generate a sleep time with some randomness to make the scrape look less systematic.
 		longsleeptime = datetime.datetime.now() # Grab the current time.
 		sleeptime1 = time.strftime('%H:%M:%S', time.gmtime(sleeptime)) # Turn the sleep time into a time/date object.
 		resumetime = longsleeptime + datetime.timedelta(0,sleeptime) # Calculate when the program will resume.
@@ -254,8 +296,8 @@ error_count = survived_list.count(0) # Count how many survived to generate end o
 
 incometext_list = [int(i) for i in incometext_list] # This does the same as in the block above but at the end of the run when all the data is collected.
 exptext_list = [int(i) for i in exptext_list]
-dicto={'ccnum':charno_list, 'updated_income':incometext_list, 'Updated_expenditure':exptext_list, 'Financial_year_ending':finyeartext_list, 'Trustees':trustee_list, 'Staff':staff_list, 'Company number':companyno_list, \
- 'Survived':survived_list, 'What the charity does':what_list, 'Who the charity helps':who_list, 'How the charity works':how_list} # Store the new variables to be appended to the data as a dictionary
+dicto={'ccnum':charno_list, 'updated_income':incometext_list, 'Updated_expenditure':exptext_list, 'Financial_year_ending':finyeartext_list, 'Trustees':trustee_list, 'Staff':staff_list, 'Volunteers':volunteers_list, 'Company number':companyno_list, \
+ 'Survived':survived_list, 'Website':website_list, 'What the charity does':what_list, 'Who the charity helps':who_list, 'How the charity works':how_list} # Store the new variables to be appended to the data as a dictionary
 df2 = pd.DataFrame(dicto) 
 df2.set_index(['ccnum'], inplace=True)
 df2.to_json(path_or_buf='new_scrape_data.json', orient='index')

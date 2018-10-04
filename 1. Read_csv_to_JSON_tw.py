@@ -28,15 +28,15 @@ df = pd.DataFrame.from_csv(inputfilepath) # Create a panda's dataframe from the 
 df.reset_index(inplace=True) # Remove the index of the frame which is asigned to column 0 on import (can be changed on import but we want a 2 level index)
 df.set_index(['ccnum', 'financial_year'], inplace=True) # Set the 2 level index. The data is longitudinal so charity number (ccnum) and period (financial_year) uniquiely identify each case
 
-for year in ['2006-07', '2007-08', '2008-09', '2009-10', '2010-11', '2012-13', '2013-14']: # Drop periods not to be used in analysis - we want a cross section. '2011-12' is left out as this is the period we want to keep.
-	df.drop(index=year, level=1, inplace=True) 
+for year in ['06-07', '07-08', '08-09', '09-10', '10-11', '12-13', '13-14']: # Drop periods not to be used in analysis - we want a cross section. '2011-12' is left out as this is the period we want to keep.
+	df.drop(index='20' + year, level=1, inplace=True) 
 
 df.reset_index(inplace=True) # 2 level index no longer needed
 df.set_index(['ccnum'], inplace=True) # Set index to charity number which is uniquely identifying within 1 time period
 
-df.to_json(path_or_buf='active_data_file.json', orient='index') # Save the dataframe out to a JSON in the format 'index' which is easy to read and verify manually
+df.to_json(path_or_buf= projectpath + 'active_data_file.json', orient='index') # Save the dataframe out to a JSON in the format 'index' which is easy to read and verify manually
 
-df1 = pd.read_json(path_or_buf='active_data_file.json', orient ='index') # Check the JSON reads back into a data frame 
+df1 = pd.read_json(path_or_buf= projectpath + 'active_data_file.json', orient ='index') # Check the JSON reads back into a data frame 
 
 print(df1) # Print the frame to check nothing has been lost
 
