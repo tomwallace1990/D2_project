@@ -18,5 +18,4 @@ print(df2)
 df3 = pd.merge(df1, df2, left_index=True, right_index=True) # Merge the new data frame with the origional based on matching the index (charity numbers) which are uniquely identifying
 print(df3)
 #df3.to_json(path_or_buf='active_data_file_updated.json', orient='index') # Save the new comined dataframe out to a JSON - commented out for now as this may be done ah-hoc during analysis
-
 #df3.to_csv(path_or_buf='active_data_file_updated_csv.csv')
