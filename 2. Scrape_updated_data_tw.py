@@ -236,25 +236,24 @@ website_list=[]
 incformat_error_count = 0 # Initialise the format error counters as described in comment for line 58.
 expformat_error_count = 0
 
-for row in charno_list: # For each row in the list created above from the data frame index.
-	charID = row # Strip the charity number.
-	for charno in [charID]: # For each of the charity numbers.
-		incometext, nametext, webbaddress, finyeartext, statustext, exptext, survived, incformat_error, expformat_error, trustee, staff, volunteers, what, who, how, companyno, website = scrapeorg(charno) # Feed the funciton each charity number in turn and pickup the returns from the fucntion.
-		incometext_list.append(incometext) # Create lists of each of the returned variables as each charity is looped over and and each value is appended.
-		finyeartext_list.append(finyeartext)
-		statustext_list.append(statustext)
-		exptext_list.append(exptext)
-		trustee_list.append(trustee)
-		staff_list.append(staff)
-		volunteers_list.append(volunteers)
-		survived_list.append(survived)
-		what_list.append(what)
-		who_list.append(who)
-		how_list.append(how)
-		companyno_list.append(companyno)
-		website_list.append(website)
-		incformat_error_count = incformat_error_count+incformat_error # Create the format error counter based on the value coming from the function
-		expformat_error_count = expformat_error_count+expformat_error
+for charno in charno_list: # For each row in the list created above from the data frame index.
+	incometext, nametext, webbaddress, finyeartext, statustext, exptext, survived, incformat_error, expformat_error, trustee, staff, volunteers, what, who, how, companyno, website = scrapeorg(charno) # Feed the funciton each charity number in turn and pickup the returns from the fucntion.
+	incometext_list.append(incometext) # Create lists of each of the returned variables as each charity is looped over and and each value is appended.
+	finyeartext_list.append(finyeartext)
+	statustext_list.append(statustext)
+	exptext_list.append(exptext)
+	trustee_list.append(trustee)
+	staff_list.append(staff)
+	volunteers_list.append(volunteers)
+	survived_list.append(survived)
+	what_list.append(what)
+	who_list.append(who)
+	how_list.append(how)
+	companyno_list.append(companyno)
+	website_list.append(website)
+	incformat_error_count = incformat_error_count+incformat_error # Create the format error counter based on the value coming from the function
+	expformat_error_count = expformat_error_count+expformat_error
+	
 	print('---------------------------------------------------------------------------') # Print the results of each loop for the user to monitor
 	runtime = datetime.datetime.now() # Print the current time for each run.
 	percdone = (count+1)/charno_list_len*100 # Calculate the percentage complete
