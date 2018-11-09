@@ -24,6 +24,7 @@ df2 = pd.read_json(path_or_buf='new_scrape_data_cleaned.json', orient ='index') 
 df3 = pd.read_json(path_or_buf='twitter_data_cleaned.json', orient ='index') # Read in the JSON file of the new dara creared in 'Scrape_updated_data.py'
 #print(df3)
 
+
 df4 = pd.merge(df1, df2, left_index=True, right_index=True) # Merge the new data frame with the origional based on matching the index (charity numbers) which are uniquely identifying
 #print(df4)
 
@@ -31,7 +32,7 @@ df5 = pd.merge(df4, df3, left_index=True, right_index=True) # Merge the new data
 #print(df4)
 
 df5 = df5[['Income2011-2012', 'Income2018', 'Survived', 'Staff','Funds_general_public', 'Prop_general_public_funding', 'Government_funding', 'Prop_government_funding', 'Helps: The general public or mankind', \
- 'Twitter Handle', 'Number of tweets in total', 'Twitter followers', 'Twitter following']]
+ 'Twitter Handle', 'Has Twitter', 'Number of tweets in total', 'Twitter followers', 'Twitter following']]
 
 print(list(df5))
 print(df5.shape)

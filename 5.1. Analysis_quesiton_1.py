@@ -12,8 +12,8 @@ import time
 import datetime
 import random
 import json
-import pandas as pd
 import numpy as np
+import pandas as pd
 import math as maths
 import os.path
 from sklearn.preprocessing import MultiLabelBinarizer
@@ -85,11 +85,14 @@ plt.show() # most charities don't revive most funding from public
 corr_income = df1['Funds_general_public'].corr(df1['Abs_funding_growth'])
 print(corr_income)
 
-corr_income = df1['Prop_government_funding'].corr(df1['Ratio_funding_growth'])
-print(corr_income) # Tiny
-
 corr_income = df1['Prop_general_public_funding'].corr(df1['Ratio_funding_growth'])
 print(corr_income) # Using propertional flips relationship but both are small
+
+corr_income = df1['Government_funding'].corr(df1['Abs_funding_growth'])
+print(corr_income)
+
+corr_income = df1['Prop_government_funding'].corr(df1['Ratio_funding_growth'])
+print(corr_income) # Tiny
 
 ###Modelling
 #Linear

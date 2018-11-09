@@ -32,16 +32,10 @@ def missing_func(var):
 ################# Data managment #################
 print('\n')
 
-df1 = pd.read_json(path_or_buf='data_with_twitter_info.json', orient ='index') # Read in
-
-for value in ['Company number', 'Financial_year_ending', 'How the charity works', 'Trustees', 'Staff', 'Survived', 'Updated_expenditure', 'Volunteers', 'Website', \
- 'What the charity does', 'Who the charity helps', 'updated_income']:
-	df1.drop(columns=[value], inplace=True) # This line would drop unneeded columns if we wanted to at this stage - for now will pass the whole file out
+df1 = pd.read_json(path_or_buf='data_with_twitter_info_only.json', orient ='index') # Read in
 
 for missingvar in ['Twitter Handle', 'Number of tweets in total', 'Twitter followers', 'Twitter following']:
 	missing_func(missingvar)
-
-df1 = df1[['Twitter Handle', 'Number of tweets in total', 'Twitter followers', 'Twitter following']]
 
 print(df1)
 
