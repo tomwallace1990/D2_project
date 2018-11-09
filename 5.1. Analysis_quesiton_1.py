@@ -51,8 +51,7 @@ print(' ') # Whitespace used to make the output window more readable
 print('>>> Run started at', starttime.strftime("%Y-%m-%d %H:%M:%S") , ' <<<') # Header of the output, with the start time
 print(' ')
 
-df1 = pd.read_json(path_or_buf='combined_data_file_cleaned.json', orient ='index') # Read in
-
+df1 = pd.read_json(path_or_buf='Final_analysis_file.json', orient ='index') # Read in
 
 df1 = df1[['Income2011-2012', 'Income2018', 'Abs_funding_growth', 'Ratio_funding_growth', 'Survived', 'Staff','Funds_general_public', 'Prop_general_public_funding', 'Government_funding', \
  'Prop_government_funding', 'Helps: The general public or mankind', 'Twitter Handle', 'Number of tweets in total', 'Twitter followers', 'Twitter following']]
