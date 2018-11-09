@@ -82,7 +82,7 @@ for variable in outlierdroplist:
 	df2 = iqrOutliers(df2, variable)
 	print(df1[variable].isna().sum(), df2[variable].isna().sum(), '- More than 0 outliers dropped:', df1[variable].isna().sum() < df2[variable].isna().sum(), '\n')
 
-df2.to_json(path_or_buf='combined_data_file_cleaned.json', orient='index') # Save the dataframe out to a JSON in the format 'index' which is easy to read and verify manually
+df2.to_json(path_or_buf='Final_analysis_file.json', orient='index') # Save the dataframe out to a JSON in the format 'index' which is easy to read and verify manually
 #df1.to_csv(path_or_buf='temp1.csv')
 #df2.to_csv(path_or_buf='temp2.csv')
 
