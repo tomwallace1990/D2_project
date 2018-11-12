@@ -1,6 +1,6 @@
 #Wrangle scrape data
 #Tom Wallace
-#10/10/18
+#01/11/18
 #This file manages the data scraped from the Charity Commission website in file 2. This involves setting missing data, breaking the 'Who the charity helps' variable into binaries, renaming, and dropping variables which won't be used in the analysis.
 
 ################################# Import packages #################################
