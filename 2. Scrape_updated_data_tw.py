@@ -1,6 +1,6 @@
 #Read CSV into JSON
 #Tom Wallace
-#24/09/18
+#5/10/18
 #This file reads in the JSON from 'Read_csv_to_JSON_tw.py' as a pandas dataframe and then scrapes the 2017 income and expenditure of each charity form the charity commission website. 
 #It then creates a new JSON file with the new data which can be easily appended onto the origional data as shown in 'Combine_old_and_new_data.py'. 
 #Some of this data is avalable in database format (.BCP files) which I don't know how to read - hence the webscrape.
