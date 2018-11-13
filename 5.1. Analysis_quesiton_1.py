@@ -3,19 +3,11 @@
 #24/09/18
 #This file 
 ################################# Import packages #################################
-from urllib.request import urlopen as uReq
-from bs4 import BeautifulSoup as soup
-import csv
-import requests
-from time import sleep
-import time
 import datetime
-import random
 import json
 import numpy as np
 import pandas as pd
 import math as maths
-import os.path
 from sklearn.preprocessing import MultiLabelBinarizer
 import matplotlib.pyplot as plt
 import matplotlib

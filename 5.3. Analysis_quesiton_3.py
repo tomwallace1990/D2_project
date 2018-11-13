@@ -3,19 +3,11 @@
 #24/09/18
 #This file 
 ################################# Import packages #################################
-from urllib.request import urlopen as uReq
-from bs4 import BeautifulSoup as soup
-import csv
-import requests
-from time import sleep
-import time
 import datetime
-import random
 import json
-import pandas as pd
 import numpy as np
+import pandas as pd
 import math as maths
-import os.path
 from sklearn.preprocessing import MultiLabelBinarizer
 import matplotlib.pyplot as plt
 import matplotlib
@@ -61,35 +53,40 @@ print(list(df1))
 print(df1.shape)
 #df1.to_csv(path_or_buf='temp1.csv')
 
-df2 = df1.drop(df1.loc[df1['Helps: The general public or mankind']==0].index)
+df2 = df1.drop(df1.loc[df1['Helps: The general public or mankind']==1].index)
+df3 = df1.drop(df1.loc[df1['Helps: The general public or mankind']==0].index)
 
 ################################# Question 1 #################################
 ###Univariate
-#Describe
-describe = df1[['Income2018', 'Prop_general_public_funding', 'Twitter followers']].describe()
-print(describe)
-
-describe = df2[['Income2018', 'Prop_general_public_funding', 'Twitter followers']].describe()
-print(describe)
-
-
 #helps table
 helps_table = df1['Helps: The general public or mankind'].value_counts()
 print(helps_table)
 
+#Describe
+#Doesn't help public
+describe = df2[['Income2018', 'Prop_general_public_funding']].describe()
+print(describe)
+describe = df2[['Twitter followers']].describe()
+print(describe)
+
+#Helps public
+describe = df3[['Income2018', 'Prop_general_public_funding']].describe()
+print(describe)
+describe = df3[['Twitter followers']].describe()
+print(describe)
+
 #Histogram - outlier heavy
-df3 = df1.drop(df1.loc[df1['Twitter followers']>=600000].index)
-hist1 = df3['Twitter followers'].plot.hist(bins=100)
+hist1 = df1['Twitter followers'].plot.hist(bins=100)
 plt.show() # most charities don't revive most funding from public
-"""
+
 ###Modelling
 #Linear
-model = linearreg(['', ''], '') # Independent/predictors in list, depenedent on its own at the end
+model = linearreg(['Helps: The general public or mankind', 'Income2018'], 'Twitter followers') # Independent/predictors in list, depenedent on its own at the end
 print(model.summary())
 
 #Logit
-model_log = logit(['', ''], '') # Independent/predictors in list, depenedent on its own at the end
+model_log = logit(['Twitter followers', 'Income2018'], 'Helps: The general public or mankind') # Independent/predictors in list, depenedent on its own at the end
 print(model_log.summary2()) # Negative effect of being government funded on survival
-"""
+
 finishtime = datetime.datetime.now()
 print('>>> Finished run at' , finishtime.strftime("%H:%M:%S"), '<<<') 
