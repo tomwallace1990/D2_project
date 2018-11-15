@@ -49,10 +49,8 @@ df1 = pd.read_json(path_or_buf='combined_data_file.json', orient ='index') # Rea
 
 ##### Growth variables #####
 df1['Abs_funding_growth'] = df1['Income2018'] - df1['Income2011-2012']
-describe = df1[['Abs_funding_growth']].describe()
 
 df1['Ratio_funding_growth'] = df1['Income2018'] / df1['Income2011-2012']
-describe = df1[['Ratio_funding_growth']].describe()
 
 ##### Outlier dropping #####
 #'Government_funding' excluded for being too small and skewed - drops all data!
