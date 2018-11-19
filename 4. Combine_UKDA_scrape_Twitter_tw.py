@@ -27,6 +27,7 @@ print(list(df5)) # Check the variables are all present
 print(df5.shape) # Check the shape of the data is still correct
 
 df5.to_json(path_or_buf='combined_data_file.json', orient='index') # Save the new comined dataframe out to a JSON
+df5.to_csv(path_or_buf='temp1.csv')
 
 finishtime = datetime.datetime.now()
 print('>>> Finished run at' , finishtime.strftime("%H:%M:%S"), '<<<') 
