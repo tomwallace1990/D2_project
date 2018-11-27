@@ -1,7 +1,7 @@
 #Combine data files
 #Tom Wallace
 #03/11/18
-#This file merges 'UKDA_data_cleaned.json', 'new_scrape_data_cleaned.json', and 'twitter_data_cleaned.json' into a single json file.
+#This file merges the UKDA, Charity Commission, and TWitter into a single json file.
 
 ################################# Import packages #################################
 import json
@@ -10,9 +10,9 @@ import datetime
 
 ################################# Main program #################################
 
-starttime = datetime.datetime.now() # Grab the date and time
-print(' ') # Whitespace used to make the output window more readable
-print('>>> Run started at', starttime.strftime("%Y-%m-%d %H:%M:%S") , ' <<<') # Header of the output, with the start time
+starttime = datetime.datetime.now()
+print(' ') 
+print('>>> Run started at', starttime.strftime("%Y-%m-%d %H:%M:%S") , ' <<<')
 print(' ')
 
 df1 = pd.read_json(path_or_buf='UKDA_data_cleaned.json', orient ='index') # Read in the JSON file of the main data set as created in '1.1 CreatingSubsetofData_np.py' as a pandas data frame
@@ -27,7 +27,6 @@ print(list(df5)) # Check the variables are all present
 print(df5.shape) # Check the shape of the data is still correct
 
 df5.to_json(path_or_buf='combined_data_file.json', orient='index') # Save the new comined dataframe out to a JSON
-df5.to_csv(path_or_buf='temp1.csv')
 
 finishtime = datetime.datetime.now()
 print('>>> Finished run at' , finishtime.strftime("%H:%M:%S"), '<<<') 

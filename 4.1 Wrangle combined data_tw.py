@@ -11,8 +11,7 @@ import numpy as np
 
 ################################# Functions #################################
 
-#checks for outliers using iqr and returns a dataset with those outliers converted to NaN
-def iqrOutliers(dataSet, theString):
+def iqrOutliers(dataSet, theString): #checks for outliers using iqr and returns a dataset with those outliers converted to NaN
     newDataSet = dataSet.copy()
     calcSeries = newDataSet[theString] # To avoid missing data biasing the calculation of the percentiles, a series is created seperate from the main data and NaNs are then dropped for the calculation
     calcSeries = calcSeries.dropna()
@@ -24,9 +23,7 @@ def iqrOutliers(dataSet, theString):
     newDataSet.loc[((newDataSet[theString] > maxVal)|(newDataSet[theString] < minVal)), theString] = np.NaN
     return newDataSet
 
-
-#checks for outliers using zScore (standard deviation) and returns a dataset with those outliers converted to NaN
-def zScores(dataSet, theString):
+def zScores(dataSet, theString): #checks for outliers using zScore (standard deviation) and returns a dataset with those outliers converted to NaN
 	newDataSet = dataSet.copy()
 	calcSeries = newDataSet[theString]
 	calcSeries = calcSeries.dropna()
@@ -40,9 +37,9 @@ def zScores(dataSet, theString):
 
 ################################# Main program #################################
 
-starttime = datetime.datetime.now() # Grab the date and time
-print(' ') # Whitespace used to make the output window more readable
-print('>>> Run started at', starttime.strftime("%Y-%m-%d %H:%M:%S") , ' <<<') # Header of the output, with the start time
+starttime = datetime.datetime.now()
+print(' ')
+print('>>> Run started at', starttime.strftime("%Y-%m-%d %H:%M:%S") , ' <<<')
 print(' ')
 
 df1 = pd.read_json(path_or_buf='combined_data_file.json', orient ='index') # Read in combined data constructed in '4. Combine_UKDA_scrape_Twitter_tw.py'

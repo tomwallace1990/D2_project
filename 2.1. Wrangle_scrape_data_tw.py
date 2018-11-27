@@ -12,9 +12,9 @@ from sklearn.preprocessing import MultiLabelBinarizer
 
 ################################# Main program #################################
 
-starttime = datetime.datetime.now() # Grab the date and time
-print(' ') # Whitespace used to make the output window more readable
-print('>>> Run started at', starttime.strftime("%Y-%m-%d %H:%M:%S") , ' <<<') # Header of the output, with the start time
+starttime = datetime.datetime.now() 
+print(' ') 
+print('>>> Run started at', starttime.strftime("%Y-%m-%d %H:%M:%S") , ' <<<') 
 print(' ')
 
 df4 = pd.read_json(path_or_buf='new_scrape_data.json', orient ='index') # Read in data from '2. Scrape_updated_data_tw.py'
